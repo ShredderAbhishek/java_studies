@@ -21,3 +21,27 @@ Footprint
 If the throughput and maximum pause-time goals have been met, then the garbage collector reduces the size of the heap until one of the 
 goals (invariably the throughput goal) can't be met. The minimum and maximum heap sizes that the garbage collector can use can be set 
 using -Xms=<nnn> and -Xmx=<mmm> for minimum and maximum heap size respectively.
+
+
+
+Eden  survivor survivor virtual                         virtual
+-----|--------|--------|-------|---------------------|-----------|
+<--------Young---------------->|<--------------Old--------------->
+
+The vast majority of objects are allocated in a pool dedicated to young objects (the young generation), and most objects die there. When 
+the young generation fills up, it causes a minor collection in which only the young generation is collected; garbage in other generations
+isn't reclaimed. The costs of such collections are, to the first order, proportional to the number of live objects being collected; a 
+young generation full of dead objects is collected very quickly. Typically, some fraction of the surviving objects from the young
+generation are moved to the old generation during each minor collection. Eventually, the old generation fills up and must be collected, 
+resulting in a major collection, in which the entire heap is collected. Major collections usually last much longer than minor collections 
+because a significantly larger number of objects are involved. Figure 3-2 shows the default arrangement of generations in the serial 
+garbage collector:
+The young generation consists of eden and two survivor spaces. Most objects are initially allocated in eden. One survivor space is 
+empty at any time, and serves as the destination of live objects in eden and the other survivor space during garbage collection; after
+garbage collection, eden and the source survivor space are empty. In the next garbage collection, the purpose of the two survivor spaces
+are exchanged. The one space recently filled is a source of live objects that are copied into the other survivor space. Objects are 
+copied between survivor spaces in this way until they've been copied a certain number of times or there isn't enough space left there. 
+These objects are copied into the old region. This process is also called aging.
+
+
+
