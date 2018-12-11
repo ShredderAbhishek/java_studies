@@ -1,2 +1,13 @@
 Garbage collection:- 
 https://docs.oracle.com/javase/9/gctuning/introduction-garbage-collection-tuning.htm#JSGCT-GUID-326EB4CF-8C8C-4267-8355-21AB04F0D304
+
+NOTES on Java SE 9 Hotspot Garbage Collector:-
+Garbage collector reponsible for dynamic memory management to or from operating system,Hands out that memory to the application as it 
+requests it,Determines which parts of that memory is still in use by the application, reclaming unused memory for reuse by the application
+
+A server class machine has >=2 physical processors, >=2 GB physical memory; so the default cong on such machines: , garbage first(G1) 
+collector, initial heap size 1/64th of physical memory, max upto 1/4th size of physical memory, tiered compiler, using both C1 and C2.
+
+GC can be configured to meet either maximum pasuse-time goal OR throughput goal:-
+1. maximum pause-time goal: pasue time is the duration when application stops and gc is performed to recover the space no longer in use. the intent is only to limit the longest of these pasue times.  maximum pause-time goal is specified with the command-line option -XX:MaxGCPauseMillis=<nnn> , meaning pause time of nnn milliseconds or lesser is required. GC adjusts the java heap size and other param to meet <=nnn pasue time. this might result in more frequent GC though.
+2. throughput goal: this is the time spent collecting garbages and the time spent outside is the application time.The goal is specified by the command-line option -XX:GCTimeRatio=nnn. The ratio of garbage collection time to application time is 1/ (1+nnn). For example, -XX:GCTimeRatio=19 sets a goal of 1/20th or 5% of the total time for garbage collection.
